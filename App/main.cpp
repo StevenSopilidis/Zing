@@ -1,5 +1,7 @@
 #include <iostream>
+#include <Server.h>
 
 int main() {
-    std::cout << "hallo there" << std::endl;
+    auto server = Server(8080);
+    server.run();
 }
