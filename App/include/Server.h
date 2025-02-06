@@ -21,21 +21,11 @@ public:
     Server& operator=(Server&) = delete;
     Server& operator=(Server&&) = delete;
 
-    auto run() -> void {
-        boost::asio::io_context io_context;
-        tcp::acceptor acceptor(io_context, {tcp::v4(), port_}, true);
-        co_spawn(io_context, listener(std::move(acceptor)), detached);
-
-        std::cout << "---> Server listening at port: " << port_ << "\n";
-        io_context.run(); 
-    }
+    auto run() -> void;
 
 private:
-    awaitable<void> listener(tcp::acceptor acceptor) {
-        for(;;) {
-            auto socket = co_await acceptor.async_accept(use_awaitable);
-        }
-    }
+    auto listener(tcp::acceptor acceptor) -> awaitable<void>;
+    auto handle_connection(tcp::socket socket) -> awaitable<void>;
 
     const unsigned short port_;
 };
