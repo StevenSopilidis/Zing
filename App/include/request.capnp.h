@@ -19,14 +19,6 @@ namespace capnp {
 namespace schemas {
 
 CAPNP_DECLARE_SCHEMA(8bcdbdada6e52212);
-CAPNP_DECLARE_SCHEMA(d4657b4dba5f9c79);
-enum class RequestProcessingStage_d4657b4dba5f9c79: uint16_t {
-  PENDING,
-  PROCESSING,
-  COMPLETED,
-  ERROR,
-};
-CAPNP_DECLARE_ENUM(RequestProcessingStage, d4657b4dba5f9c79);
 
 }  // namespace schemas
 }  // namespace capnp
@@ -40,14 +32,12 @@ struct Request {
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(8bcdbdada6e52212, 5, 1)
+    CAPNP_DECLARE_STRUCT_HEADER(8bcdbdada6e52212, 3, 1)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
   };
 };
-
-typedef ::capnp::schemas::RequestProcessingStage_d4657b4dba5f9c79 RequestProcessingStage;
 
 // =======================================================================================
 
@@ -74,12 +64,8 @@ public:
 
   inline  ::uint32_t getType() const;
 
-  inline  ::uint64_t getCreatedAt() const;
-
   inline bool hasRawBytes() const;
   inline  ::capnp::Data::Reader getRawBytes() const;
-
-  inline  ::RequestProcessingStage getStatus() const;
 
   inline  ::uint64_t getProcessedAt() const;
 
@@ -120,18 +106,12 @@ public:
   inline  ::uint32_t getType();
   inline void setType( ::uint32_t value);
 
-  inline  ::uint64_t getCreatedAt();
-  inline void setCreatedAt( ::uint64_t value);
-
   inline bool hasRawBytes();
   inline  ::capnp::Data::Builder getRawBytes();
   inline void setRawBytes( ::capnp::Data::Reader value);
   inline  ::capnp::Data::Builder initRawBytes(unsigned int size);
   inline void adoptRawBytes(::capnp::Orphan< ::capnp::Data>&& value);
   inline ::capnp::Orphan< ::capnp::Data> disownRawBytes();
-
-  inline  ::RequestProcessingStage getStatus();
-  inline void setStatus( ::RequestProcessingStage value);
 
   inline  ::uint64_t getProcessedAt();
   inline void setProcessedAt( ::uint64_t value);
@@ -206,20 +186,6 @@ inline void Request::Builder::setType( ::uint32_t value) {
       ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::uint64_t Request::Reader::getCreatedAt() const {
-  return _reader.getDataField< ::uint64_t>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-
-inline  ::uint64_t Request::Builder::getCreatedAt() {
-  return _builder.getDataField< ::uint64_t>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-inline void Request::Builder::setCreatedAt( ::uint64_t value) {
-  _builder.setDataField< ::uint64_t>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS, value);
-}
-
 inline bool Request::Reader::hasRawBytes() const {
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
@@ -254,32 +220,18 @@ inline ::capnp::Orphan< ::capnp::Data> Request::Builder::disownRawBytes() {
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline  ::RequestProcessingStage Request::Reader::getStatus() const {
-  return _reader.getDataField< ::RequestProcessingStage>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
-}
-
-inline  ::RequestProcessingStage Request::Builder::getStatus() {
-  return _builder.getDataField< ::RequestProcessingStage>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
-}
-inline void Request::Builder::setStatus( ::RequestProcessingStage value) {
-  _builder.setDataField< ::RequestProcessingStage>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS, value);
-}
-
 inline  ::uint64_t Request::Reader::getProcessedAt() const {
   return _reader.getDataField< ::uint64_t>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
+      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
 }
 
 inline  ::uint64_t Request::Builder::getProcessedAt() {
   return _builder.getDataField< ::uint64_t>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
+      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
 }
 inline void Request::Builder::setProcessedAt( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, value);
+      ::capnp::bounded<2>() * ::capnp::ELEMENTS, value);
 }
 
 
