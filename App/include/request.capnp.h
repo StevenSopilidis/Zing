@@ -32,7 +32,7 @@ struct Request {
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(8bcdbdada6e52212, 3, 1)
+    CAPNP_DECLARE_STRUCT_HEADER(8bcdbdada6e52212, 2, 1)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -66,8 +66,6 @@ public:
 
   inline bool hasRawBytes() const;
   inline  ::capnp::Data::Reader getRawBytes() const;
-
-  inline  ::uint64_t getProcessedAt() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -112,9 +110,6 @@ public:
   inline  ::capnp::Data::Builder initRawBytes(unsigned int size);
   inline void adoptRawBytes(::capnp::Orphan< ::capnp::Data>&& value);
   inline ::capnp::Orphan< ::capnp::Data> disownRawBytes();
-
-  inline  ::uint64_t getProcessedAt();
-  inline void setProcessedAt( ::uint64_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -218,20 +213,6 @@ inline void Request::Builder::adoptRawBytes(
 inline ::capnp::Orphan< ::capnp::Data> Request::Builder::disownRawBytes() {
   return ::capnp::_::PointerHelpers< ::capnp::Data>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-
-inline  ::uint64_t Request::Reader::getProcessedAt() const {
-  return _reader.getDataField< ::uint64_t>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-
-inline  ::uint64_t Request::Builder::getProcessedAt() {
-  return _builder.getDataField< ::uint64_t>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-inline void Request::Builder::setProcessedAt( ::uint64_t value) {
-  _builder.setDataField< ::uint64_t>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS, value);
 }
 
 
