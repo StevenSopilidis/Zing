@@ -27,7 +27,7 @@ auto Server::listener(tcp::acceptor acceptor) -> awaitable<void> {
 auto Server::handle_connection(tcp::socket socket) -> awaitable<void> {
     try
     {
-        char buffer[1024];
+        std::vector<uint8_t> buffer(1024);
 
         for (;;) {
             auto n = co_await socket.async_read_some(
@@ -36,17 +36,11 @@ auto Server::handle_connection(tcp::socket socket) -> awaitable<void> {
 
             if (n == 0)
                 break;
+            
+            std::cout << "---> " << n << std::endl;
 
-            kj::ArrayPtr<const capnp::word> words(
-                reinterpret_cast<const capnp::word*>(buffer),
-                n / sizeof(capnp::word)
-            );
-
-            capnp::FlatArrayMessageReader message(words);
-
-            Request::Reader request = message.getRoot<Request>();
-
-            std::cout << request.getId() << "\n";
+            // Deserialize the request
+            process_request_data(buffer);
 
             co_await boost::asio::async_write(
                 socket, 
@@ -54,14 +48,20 @@ auto Server::handle_connection(tcp::socket socket) -> awaitable<void> {
                 use_awaitable
             );
         }
-    }
-    catch(const std::exception& e)
+    } catch(const boost::system::system_error& e)
     {
-        std::cerr << "Connection error: " << e.what() << '\n';
+        if (e.code() == boost::asio::error::eof) {
+            std::cerr << "---> Connection closed by client" << std::endl;
+        } else if (e.code() == boost::asio::error::connection_reset) {
+            std::cerr << "---> Connection reset by peer" << std::endl;
+        } else {
+            std::cerr << "---> Connection error: " << e.what() << std::endl;
+        }
+    } catch (const std::exception& e)
+    {
+        std::cerr << "---> Unexpected error: " << e.what() << std::endl;
     }
 
-
-    // handle connection shutdown
     try
     {
         socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
@@ -69,4 +69,24 @@ auto Server::handle_connection(tcp::socket socket) -> awaitable<void> {
     catch(const std::exception& e) {}
     
     socket.close();
+}
+
+auto Server::process_request_data(const std::vector<uint8_t>& data) -> void {
+    auto n = data.size();
+    if (data.size() % sizeof(capnp::word) != 0) { // check if data is aligned
+        std::cerr << "---> INvalid serialized data size.\n";
+        return;
+    }
+
+    auto word_count = n / sizeof(capnp::word);
+    kj::ArrayPtr<const capnp::word> words(
+        reinterpret_cast<const capnp::word*>(data.data()),
+        word_count
+    );
+
+    capnp::FlatArrayMessageReader message_reader(words);
+    Request::Reader request = message_reader.getRoot<Request>();
+
+    std::cout << "---> Received request from: " << request.getSourceId() <<
+        " with Id: " << request.getId() << " of Type: " << request.getType() << std::endl; 
 }

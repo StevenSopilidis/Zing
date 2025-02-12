@@ -26,6 +26,7 @@ public:
 private:
     auto listener(tcp::acceptor acceptor) -> awaitable<void>;
     auto handle_connection(tcp::socket socket) -> awaitable<void>;
+    auto process_request_data(const std::vector<uint8_t>& data) -> void;
 
     const unsigned short port_;
 };
