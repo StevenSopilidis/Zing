@@ -7,7 +7,7 @@
 #include <memory>
 #include "request.capnp.h"
 
-using boost::asio::ip::tcp;
+using boost::asio::ip::udp;
 
 struct RequestData {
     uint64_t id;
@@ -18,19 +18,22 @@ struct RequestData {
 
 class Client {
 public:
-    Client(const std::string& server_port, const std::string& host) : 
-        server_port_{std::move(server_port)}, host_{std::move(host)}, io_context_{} {}
+    Client(const std::string& server_port, const std::string& server_host) : 
+        server_port_{std::move(server_port)}, 
+        server_host_{std::move(server_host)},
+        io_context_{} {}
 
     auto connect_to_server() -> bool;
     auto disconnect_from_server() -> void;
 
     auto send_request(const RequestData& data,const size_t raw_data_size) noexcept -> void;
+    auto receive_response() -> std::unique_ptr<std::vector<uint8_t>>;
 private:
     auto serialize_request(const RequestData& data,const size_t raw_data_size)
         const noexcept -> std::unique_ptr<std::vector<uint8_t>>;
 
     const std::string server_port_;
-    const std::string host_;
+    const std::string server_host_;
     boost::asio::io_context io_context_;
-    std::optional<tcp::socket> server_socket_;
+    std::optional<udp::socket> server_socket_;
 };

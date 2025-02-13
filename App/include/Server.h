@@ -5,7 +5,7 @@
 #include <iostream>
 #include <stddef.h>
 
-using boost::asio::ip::tcp;
+using boost::asio::ip::udp;
 using boost::asio::awaitable;
 using boost::asio::co_spawn;
 using boost::asio::detached;
@@ -24,8 +24,7 @@ public:
     auto run() -> void;
 
 private:
-    auto listener(tcp::acceptor acceptor) -> awaitable<void>;
-    auto handle_connection(tcp::socket socket) -> awaitable<void>;
+    auto listener(udp::socket acceptor) -> awaitable<void>;
     auto process_request_data(const std::vector<uint8_t>& data) -> void;
 
     const unsigned short port_;
