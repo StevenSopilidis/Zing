@@ -5,27 +5,23 @@
 #include <iostream>
 #include <stddef.h>
 
-using boost::asio::ip::udp;
-using boost::asio::awaitable;
-using boost::asio::co_spawn;
-using boost::asio::detached;
-using boost::asio::use_awaitable;
-namespace this_coro = boost::asio::this_coro;
+namespace App {
+    class Server final {
+    public:
+        Server(const unsigned short port) noexcept: port_{port} {}
 
-class Server {
-public:
-    Server(const unsigned short port) : port_{port} {}
+        Server(Server&) = delete;
+        Server(Server&&) = delete;
+        Server& operator=(Server&) = delete;
+        Server& operator=(Server&&) = delete;
 
-    Server(Server&) = delete;
-    Server(Server&&) = delete;
-    Server& operator=(Server&) = delete;
-    Server& operator=(Server&&) = delete;
+        void run();
 
-    auto run() -> void;
+    private:
+        boost::asio::awaitable<void> listener(boost::asio::ip::udp::socket acceptor);
+        void process_request_data(const std::vector<uint8_t>& data);
 
-private:
-    auto listener(udp::socket acceptor) -> awaitable<void>;
-    auto process_request_data(const std::vector<uint8_t>& data) -> void;
+        const unsigned short port_;
+    };
+}
 
-    const unsigned short port_;
-};

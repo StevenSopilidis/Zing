@@ -5,6 +5,6 @@
 #include <kj/io.h>
 
 int main() {
-    auto server = Server(9098);
+    auto server = App::Server(9098);
     server.run();
 }
