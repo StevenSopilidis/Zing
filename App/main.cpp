@@ -6,5 +6,5 @@
 
 int main() {
     auto server = App::Server(9098);
-    server.run();
+    server.run(30);
 }
