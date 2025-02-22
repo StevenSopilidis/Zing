@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/awaitable.hpp>
 #include <iostream>
+#include <capnp/serialize.h>
 #include <stddef.h>
 #include <span>
 #include <memory>
@@ -21,7 +22,9 @@ namespace App {
 
     private:
         boost::asio::awaitable<void> listener(boost::asio::ip::udp::socket acceptor);
-        void process_request_data(std::shared_ptr<std::vector<uint8_t>> data);
+        void process_request_data(
+            std::shared_ptr<std::vector<capnp::word>> data, std::size_t bytes_received
+        );
 
         const unsigned short port_;
     };
