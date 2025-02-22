@@ -11,6 +11,7 @@ include_directories(${PROJECT_SOURCE_DIR}/../App/include)
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 set(REQUEST_CAPNP_SRC ${PROJECT_SOURCE_DIR}/../App/src/request.capnp.c++)
 
+
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/main.cpp ${SOURCES})
 
 find_package(Boost REQUIRED COMPONENTS system)
