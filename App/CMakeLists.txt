@@ -15,12 +15,17 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    
     target_link_libraries(${PROJECT_NAME} PRIVATE Boost::system)
 endif()
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(CAPNP REQUIRED capnp)
 
+# Include capnp
+pkg_check_modules(CAPNP REQUIRED capnp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CAPNP_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CAPNP_LIBRARIES})
+
+# Include rdkafka (ensure both C++ and C versions are linked)
+pkg_check_modules(RDKAFKA REQUIRED rdkafka++ rdkafka)
+target_include_directories(${PROJECT_NAME} PRIVATE ${RDKAFKA_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${RDKAFKA_LIBRARIES} rdkafka rdkafka++)
