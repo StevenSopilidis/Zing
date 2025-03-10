@@ -5,36 +5,10 @@
 #include <librdkafka/rdkafka.h>
 
 #define BROKER "localhost:9092"
-#define TOPIC "test-topic"
+#define TOPIC "zing_topic"
 #define GROUP_ID "test-group"
 
 bool run_consumer = true;
-
-// Kafka Producer Function
-void kafka_producer() {
-    rd_kafka_t *producer;
-    rd_kafka_conf_t *conf = rd_kafka_conf_new();
-    char errstr[512];
-
-    rd_kafka_conf_set(conf, "bootstrap.servers", BROKER, errstr, sizeof(errstr));
-    producer = rd_kafka_new(RD_KAFKA_PRODUCER, conf, errstr, sizeof(errstr));
-
-    for (int i = 0; i < 10; i++) {
-        std::string message = "Message " + std::to_string(i);
-        rd_kafka_producev(
-            producer,
-            RD_KAFKA_V_TOPIC(TOPIC),
-            RD_KAFKA_V_VALUE((void*)message.c_str(), message.size()),
-            RD_KAFKA_V_END
-        );
-        rd_kafka_poll(producer, 0); // Handle delivery reports
-        std::cout << "Produced: " << message << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-
-    rd_kafka_flush(producer, 5000);
-    rd_kafka_destroy(producer);
-}
 
 // Kafka Consumer Function
 void kafka_consumer() {
@@ -75,13 +49,8 @@ void signal_handler(int signal) {
 int main() {
     std::signal(SIGINT, signal_handler);
 
-    std::thread producer_thread(kafka_producer);
     std::thread consumer_thread(kafka_consumer);
 
-    producer_thread.join();
-    std::this_thread::sleep_for(std::chrono::seconds(2)); // Allow consumer to process messages
-
-    run_consumer = false;
     consumer_thread.join();
 
     std::cout << "Exiting..." << std::endl;

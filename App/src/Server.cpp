@@ -96,7 +96,6 @@ namespace App {
         capnp::FlatArrayMessageReader message_reader(words);
         Request::Reader request = message_reader.getRoot<Request>();
 
-        std::cout << "---> Received request from: " << request.getSourceId() <<
-            " with Id: " << request.getId() << " of Type: " << request.getType() << std::endl; 
+        producer_.produce(data);        
     }
 }

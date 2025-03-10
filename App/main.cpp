@@ -5,10 +5,9 @@
 #include <kj/io.h>  
 #include <librdkafka/rdkafka.h>
 #include "Kafka.h"
+#include "Producer.h"
 
 int main() {
-    auto config = App::UpdatePartitionConfig{"test_topic", 1};
-    auto kafka = App::Kafka("localhost:9092");
-    // kafka.create_topic(config);
-    kafka.update_num_partitions(config);
+    auto server = App::Server(9098, "localhost:9092", "zing_topic");
+    server.run(3);
 }
