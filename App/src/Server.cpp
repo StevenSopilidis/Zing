@@ -14,10 +14,8 @@ namespace App {
     using boost::asio::ip::udp;
     using ClockType = std::chrono::steady_clock;
 
-
     constexpr size_t MAX_MESSAGE_SIZE = 1024;
     constexpr std::size_t MAX_BUFFER_WORDS = MAX_MESSAGE_SIZE / sizeof(capnp::word);
-
 
     void Server::run(size_t num_threads) {
         boost::asio::io_context io_context;
@@ -97,5 +95,13 @@ namespace App {
         Request::Reader request = message_reader.getRoot<Request>();
 
         producer_.produce(data);        
+    }
+
+    SetupServerProducerResult Server::setup_server_producer() {
+        auto result = producer_.setup_producer();
+        if (result == SetUpProducerResult::ERROR) {
+            return SetupServerProducerResult::ERROR;
+        }
+        return SetupServerProducerResult::OK;
     }
 }

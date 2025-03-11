@@ -6,8 +6,11 @@
 #include <librdkafka/rdkafka.h>
 #include "Kafka.h"
 #include "Producer.h"
+#include "SetupServerProducerResult.h"
 
 int main() {
     auto server = App::Server(9098, "localhost:9092", "zing_topic");
-    server.run(3);
+    auto result = server.setup_server_producer();
+    if (result == SetupServerProducerResult::OK)
+        server.run(3);
 }

@@ -18,24 +18,23 @@ namespace App {
 
         ~Producer() {
             rd_kafka_flush(producer_.get(), flash_timeout_ms_);
-            rd_kafka_destroy(producer_.get());   
         }
         
         SetUpProducerResult setup_producer() {
             char errstr[512];
 
             auto conf = rd_kafka_conf_new();
-            if (rd_kafka_conf_set(conf, "bootstrap.servers", broker_.c_str(), errstr, sizeof(errstr))
-            != RD_KAFKA_CONF_OK) {
-                std::cerr << "---> Failed to set broker " << errstr << "\n";
+            if (rd_kafka_conf_set(conf, "bootstrap.servers", broker_.c_str(), errstr, sizeof(errstr)) != RD_KAFKA_CONF_OK) {
+                std::cerr << "---> Failed to set bootstrap.servers: " << errstr << "\n";
                 return SetUpProducerResult::ERROR;
             }
 
             auto producer = rd_kafka_new(RD_KAFKA_PRODUCER, conf, errstr, sizeof(errstr));
-            if (!producer_) {
-                std::cerr << "---> Failed to create producer " << errstr << "\n"; 
+            if (!producer) {
+                std::cerr << "---> Failed to create producer: " << errstr << "\n";
+                return SetUpProducerResult::ERROR;
             }
-            
+
             producer_ = std::shared_ptr<rd_kafka_t>(producer, [](rd_kafka_t* ptr) {
                 rd_kafka_destroy(ptr);
             });

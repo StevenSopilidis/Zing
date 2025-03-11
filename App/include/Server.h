@@ -8,6 +8,7 @@
 #include <span>
 #include <memory>
 #include "Producer.h"
+#include "SetupServerProducerResult.h"
 
 namespace App {
     class Server final {
@@ -18,7 +19,6 @@ namespace App {
             : port_{port},
             producer_{broker, topic, produce_callback} 
         {
-            producer_.setup_producer();
         }
 
         Server(Server&) = delete;
@@ -27,6 +27,7 @@ namespace App {
         Server& operator=(Server&&) = delete;
 
         void run(size_t num_threads);
+        SetupServerProducerResult setup_server_producer();
 
     private:
         boost::asio::awaitable<void> listener(boost::asio::ip::udp::socket acceptor);
