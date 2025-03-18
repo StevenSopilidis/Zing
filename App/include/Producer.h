@@ -8,6 +8,7 @@
 #include <concepts>
 #include <cassert>
 #include "SetUpProducerResult.h"
+#include "request.capnp.h"
 
 namespace App {
     template <std::invocable Callback>
@@ -43,21 +44,22 @@ namespace App {
             return SetUpProducerResult::OK;
         }
 
-        void produce(std::shared_ptr<std::vector<capnp::word>> data) {
+        void produce(std::shared_ptr<std::vector<uint8_t>> data, size_t num_bytes) {
             assert(producer_ != nullptr);
-
+            
             auto buff = static_cast<void*>(data->data());
+
             rd_kafka_producev(
                 producer_.get(),
                 RD_KAFKA_V_TOPIC(topic_.c_str()),
-                RD_KAFKA_V_VALUE(buff, data->size()),
+                RD_KAFKA_V_VALUE(buff, num_bytes),
+                RD_KAFKA_V_MSGFLAGS(RD_KAFKA_MSG_F_COPY),
                 RD_KAFKA_V_END
             );
 
+
             cb_();
         }
-
-        
 
     private:
         std::string broker_;

@@ -32,7 +32,7 @@ namespace App {
     private:
         boost::asio::awaitable<void> listener(boost::asio::ip::udp::socket acceptor);
         void process_request_data(
-            std::shared_ptr<std::vector<capnp::word>> data, std::size_t bytes_received
+            std::shared_ptr<std::vector<uint8_t>> data, std::size_t bytes_received
         );
 
         static void produce_callback() {
