@@ -1,6 +1,10 @@
 #include <iostream>
 #include <cassert>
+#include <vector>
+#include <capnp/serialize.h>
 #include "KafkaConsumer.h"
+#include "request.capnp.h"
+#include "MessageParser.h"
 
 namespace Worker {
     SetUpConsumerResult KafkaConsumer::setup_consumer() noexcept {
@@ -66,16 +70,26 @@ namespace Worker {
 
     void KafkaConsumer::run() noexcept {
         assert(consumer_);
-        
+                
         std::cout << "---> Consuming\n";
+
         while (true) {
             auto msg = rd_kafka_consumer_poll(consumer_.get(), consumer_poll_timeout_ms_);
-            if (msg) {
-                if (!msg->err) {
-                    std::cout << "---> Received message of size: " << msg->len << "\n";
+            if (msg && !msg->err && msg->payload != nullptr) {
+                auto payload = std::shared_ptr<const uint8_t>(
+                    static_cast<const uint8_t*>(msg->payload),
+                    [msg](const uint8_t*) { rd_kafka_message_destroy(msg); }
+                );
+                size_t payload_len = msg->len;
+
+                std::cout << "---> Payload Length: " << payload_len << "\n"; 
+
+                auto request = parse_payload_to_request(payload, payload_len);
+                if (request != nullptr) {
+                    std::cout << "---> RequestId: " << request->getId() << "\n";
                 }
-                rd_kafka_message_destroy(msg);
             }
         }
+
     }
 }

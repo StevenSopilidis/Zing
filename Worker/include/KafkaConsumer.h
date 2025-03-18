@@ -26,7 +26,7 @@ namespace Worker {
         std::string broker_;
         std::string topic_;
         std::string group_id_;
-        const size_t consumer_poll_timeout_ms_ = 50;
+        const size_t consumer_poll_timeout_ms_{50};
         std::unique_ptr<rd_kafka_t, decltype(&rd_kafka_destroy)> consumer_{nullptr, &rd_kafka_destroy};
     };
 }
